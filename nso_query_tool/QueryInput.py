@@ -1,7 +1,7 @@
 """Module for Input class."""
+from ForEach import ForEach
 
-
-class Input():
+class QueryInput():
     """Class to abstract the building of a query.
 
     Simplifies and abstracts the foreach, expressions & filters.
@@ -9,28 +9,23 @@ class Input():
 
     def __init__(self, _from, select, where=False):
         """Contructor for Input."""
-        # self._validate_input(_from)
-        # self._validate_input(select)
-        # self._validate_input(where)
         self._from = _from
         self.select = select
         self.where = where
-        self.foreach = self.build_foreach()
+        self.foreach = self.foreach()
         self.expressions = []
         self._build_expressions()
 
-    def _validate_input(self, inputs):
-        """Validate input follows the proper guidance, no leading or trailing '/'.
 
-        and starts with:
-            letter
-            ..
-            .
-            @
-        """
-        assert inputs[0] is str
-        assert inputs[0] is not '/'
-        assert inputs[-1] is not '/'
+    def foreach(self):
+        device_filters = []
+        path = ""
+        for item in self._from:
+                if item != "path":
+                    device_filters.append(item)
+                else:
+                    path = item['path']
+        return ForEach(where_filters=self.where, device_filters=device_filters, path=path ).foreach()
 
     def _build_expressions(self):
         """Method to collate and build JSON data for select statemenets."""
@@ -105,3 +100,9 @@ class Input():
             return "/devices/device"
         else:
             return base + filters
+
+if __name__ == "__main__":
+    select= ['name',"config/ios:ip/http/server", "platform/model", "platform/version", "platform/name"]
+    _from= ["*"]
+    #where= ["config/ios:ip/http/server='true'"]
+    print QueryInput(_from=_from, select=select, where=where).foreach

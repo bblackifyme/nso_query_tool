@@ -1,5 +1,5 @@
 """Module for Query Result Class."""
-
+from tabulate import tabulate
 
 class QueryResult():
     """Class that repersents the results of a query.
@@ -16,12 +16,13 @@ class QueryResult():
         self.status_code = request_results.status_code
         if request_results.status_code == 200:
             self.full = request_results.json()
-            if 'result' in request_results.json()[
-                    "tailf-rest-query:query-result"]:
-                self.json = self._collate_results(request_results.json()[
-                    "tailf-rest-query:query-result"]['result'])
+            if 'result' in request_results.json()["tailf-rest-query:query-result"]:
+                self.json = self._collate_results(request_results.json()["tailf-rest-query:query-result"]['result'])
+                self.html = self.results_to_html()
+                self.text = self.results_to_text()
             else:
                 self.json = {"error": "No query results."}
+
         else:
             self.error = request_results.text
             self.json = {
@@ -56,3 +57,28 @@ class QueryResult():
                 row_results.update({item["label"]: item["value"]})
             collated_results.append(row_results)
         return collated_results
+
+    def tabulate_data(self):
+        table = []
+        headers = []
+        for item in self.json[0]:
+            headers.append(item)
+        for row in self.json:
+            row_items = []
+            for column in row:
+                row_items.append(row[column])
+            table.append(row_items)
+        return [table , headers]
+
+    def results_to_html(self):
+        """Translate self.json into an HTML table """
+        data = self.tabulate_data()
+        table = data[0]
+        headers = data[1]
+        return tabulate(table, headers, tablefmt="html")
+
+    def results_to_text(self):
+        data = self.tabulate_data()
+        table = data[0]
+        headers = data[1]
+        return tabulate(table, headers, tablefmt="simple")

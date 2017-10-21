@@ -2,7 +2,7 @@
 import json
 import requests
 from QueryResult import QueryResult
-from Input import Input
+from QueryInput import QueryInput
 
 
 class NsoQuery():
@@ -20,7 +20,7 @@ class NsoQuery():
         Usage:
         input_object= NsoQuery(server, _from=_from, select=select, where=where)
         """
-        self.inputs = Input(select=select, _from=_from, where=where)
+        self.inputs = QueryInput(select=select, _from=_from, where=where)
         self.server = nso_server.server
         self.username = nso_server.username
         self.password = nso_server.password
@@ -63,7 +63,9 @@ class NsoQuery():
                                         url,
                                         data=json.dumps(payload),
                                         headers=headers,
-                                        auth=(self.username, self.password))
+                                        auth=(self.username, self.password),
+                                        verify=False,
+                                        )
         try:
             if get_result_handle.status_code == 200:
                 handle = get_result_handle.json()[
@@ -80,4 +82,6 @@ class NsoQuery():
                                 url,
                                 data=handle_query,
                                 headers=headers,
-                                auth=(self.username, self.password))
+                                auth=(self.username, self.password),
+                                verify=False,
+                                )

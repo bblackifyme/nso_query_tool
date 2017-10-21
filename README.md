@@ -61,3 +61,19 @@ select = ['name', "config/ios:ip/http/server", "platform/model", "platform/versi
       print item
   print query.results.length()
 ```
+
+## Advanced Usage
+
+Should you wish to skip the abstraction layer and directly pass in your own XPath statements into the NSO API you can do so.
+
+We do this by creating a query object then over-writing the foreach attribute with our own XPath statement.
+
+This will eliminate the "_from" and "where" statements from the query, but still rely on on the "select"
+
+```python
+query = NsoQuery(server, _from=_from, select=select)
+  #/devices/device-group[name='group11']/member acc1-pl-sw1,  {"path":"config/ios:interface/GigabitEthernet"}
+  query.foreach= "devices/device[name=/devices/device-group[name='acc1-pl']/member]/config/ios:interface/GigabitEthernet"
+  query.results = QueryResult(query._send_query(query._create_payload()))
+  print query.results.html
+```

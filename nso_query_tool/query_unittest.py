@@ -1,6 +1,8 @@
 import unittest
-from nso_query_tool import NsoServer, NsoQuery, Input
-
+#from nso_query_tool import NsoServer, NsoQuery, Input
+from NsoServer import NsoServer
+from NsoQuery import NsoQuery
+from QueryInput import QueryInput as Input
 
 class TestNsoQueryTool(unittest.TestCase):
     """Test Suite for NSO Query Tool."""
