@@ -20,9 +20,9 @@ class ForEach(object):
             Filter is in the form of a dictionary:
             {"device-group":"name"} or {"device":"device_name"}
         """
-        if self.device_filters == "":
+        if len(self.device_filters) == 0:
             if "device-group" in filters:
-                self.device_filter = "[name=/devices/device-group[name='{}']/member]".format(filters["device-group"])
+                self.device_filters = "[name=/devices/device-group[name='{}']/member]".format(filters["device-group"])
             elif "device" in filters:
                 self.device_filters = "[name='{}']".format(filters["device"])
         else:
@@ -47,5 +47,5 @@ class ForEach(object):
 
 
 if __name__ == "__main__":
-    var = ForEach(device_filters=[{"device":"acc1-pl-sw1"}], path="config/ios:interface/GigabitEthernet", where_filters=["name=0/1"])
+    var = ForEach(device_filters=[{"device-group":"acc1-pl-sw1"},{"device-group":"test"}], path="config/ios:interface/GigabitEthernet", where_filters=["name=0/1"])
     print var.foreach()
