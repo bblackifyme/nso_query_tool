@@ -3,6 +3,7 @@ import unittest
 from NsoServer import NsoServer
 from NsoQuery import NsoQuery
 from QueryInput import QueryInput as Input
+from ForEach import ForEach
 
 class TestNsoQueryTool(unittest.TestCase):
     """Test Suite for NSO Query Tool."""
@@ -74,6 +75,24 @@ class TestNsoQueryTool(unittest.TestCase):
         """Test that returned result row dictionarys have the correct keys """
         result = NsoQuery(self.server,_from= [{"device":"not a device"}], select=["name"])
         result.results.json = {"result":"No query results. Validate the foreach statement."}
+
+    def test_foreach_builder(self):
+        """ Test that the foreach builder works properly. """
+        foreach = ForEach(device_filters=[{"device":"acc1-pl-sw1"}])
+        correct_foreach = "devices/device[name='acc1-pl-sw1']"
+        self.assertEqual(foreach.foreach(), correct_foreach)
+
+    def test_foreach_builder_with_path(self):
+        """ Test that the foreach builder works properly. """
+        foreach = ForEach(device_filters=[{"device":"acc1-pl-sw1"}], path="config/ios:interface/GigabitEthernet")
+        correct_foreach = "devices/device[name='acc1-pl-sw1']/config/ios:interface/GigabitEthernet"
+        self.assertEqual(foreach.foreach(), correct_foreach)
+
+    def test_foreach_builder_with_path_and_where(self):
+        """ Test that the foreach builder works properly. """
+        foreach = ForEach(device_filters=[{"device":"acc1-pl-sw1"}], path="config/ios:interface/GigabitEthernet", where_filters=["name=0/1"])
+        correct_foreach = "devices/device[name='acc1-pl-sw1']/config/ios:interface/GigabitEthernet[name=0/1]"
+        self.assertEqual(foreach.foreach(), correct_foreach)
 
 
 if __name__ == '__main__':

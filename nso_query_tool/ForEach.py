@@ -2,7 +2,7 @@
 class ForEach(object):
     """Class reperesenting a foreach statement."""
 
-    def __init__(self, path, device_filters, where_filters=""):
+    def __init__(self, device_filters, path="", where_filters=""):
         self.base = "devices/device"
         self.device_filters = ""
         self.where_filters = ""
