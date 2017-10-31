@@ -68,7 +68,7 @@ Should you wish to skip the abstraction layer and directly pass in your own XPat
 
 We do this by creating a query object then over-writing the foreach attribute with our own XPath statement.
 
-This will eliminate the "_from" and "where" statements from the query, but still rely on on the "select"
+This will eliminate the "_from" and "where" statements from the query, but still rely on the "select"
 
 ```python
 query = NsoQuery(server, _from=_from, select=select)

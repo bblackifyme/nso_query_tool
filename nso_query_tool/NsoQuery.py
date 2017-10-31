@@ -64,7 +64,7 @@ class NsoQuery():
                                         data=json.dumps(payload),
                                         headers=headers,
                                         auth=(self.username, self.password),
-                                        verify=False,
+
                                         )
         try:
             if get_result_handle.status_code == 200:
@@ -83,5 +83,4 @@ class NsoQuery():
                                 data=handle_query,
                                 headers=headers,
                                 auth=(self.username, self.password),
-                                verify=False,
                                 )

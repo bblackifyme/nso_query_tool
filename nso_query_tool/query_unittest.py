@@ -46,13 +46,18 @@ class TestNsoQueryTool(unittest.TestCase):
     def test_Input_Builder_device_group_no_where(self):
         """Test to validate the input builder expressions are built properly for many selects."""
         foreach = Input(_from= [{"device-group":"test"}], select=["name"]).build_foreach()
+        #"devices/device[name=/devices/device-group[name='acc1-pl']/member]
         self.assertEqual(foreach, "/devices/device[name=/devices/device-group[name='test']/member]")
 
+    def test_multiple_device_groups(self):
+        foreach = Input(_from= [{"device-group":"test"}, {"device-group":"test2"}], select=["name"]).build_foreach()
+        correct_foreach = "/devices/device[name=/devices/device-group[name='test']/member or name=/devices/device-group[name='test2']/member]"
+        self.assertEqual(foreach, correct_foreach)
 
-    def test_raises_error(self):
-        """Test that a known malformed query returns a status code of 400 """
-        with self.assertRaises(IndexError):
-            result = NsoQuery(self.server, _from=["improper input"] ,select=["name"])
+    def test_device_group_and_device(self):
+        foreach = Input(_from= [{"device-group":"test"}, {"device":"test2"}], select=["name"]).build_foreach()
+        correct_foreach = "/devices/device[name=/devices/device-group[name='test']/member or name='test2']"
+        self.assertEqual(foreach, correct_foreach)
 
     def test_returns_list(self):
         """Test that a known proper query returns data type list """
@@ -88,11 +93,18 @@ class TestNsoQueryTool(unittest.TestCase):
         correct_foreach = "devices/device[name='acc1-pl-sw1']/config/ios:interface/GigabitEthernet"
         self.assertEqual(foreach.foreach(), correct_foreach)
 
+    def test_foreach_builder_with_path_al(self):
+        """ Test that the foreach builder works properly. """
+        foreach = ForEach(device_filters=["*", path="config/ios:interface/GigabitEthernet")
+        correct_foreach = "devices/device/config/ios:interface/GigabitEthernet"
+        self.assertEqual(foreach.foreach(), correct_foreach)
+
     def test_foreach_builder_with_path_and_where(self):
         """ Test that the foreach builder works properly. """
         foreach = ForEach(device_filters=[{"device":"acc1-pl-sw1"}], path="config/ios:interface/GigabitEthernet", where_filters=["name=0/1"])
         correct_foreach = "devices/device[name='acc1-pl-sw1']/config/ios:interface/GigabitEthernet[name=0/1]"
         self.assertEqual(foreach.foreach(), correct_foreach)
+
 
 
 if __name__ == '__main__':
